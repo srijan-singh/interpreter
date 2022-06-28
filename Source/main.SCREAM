@@ -1,0 +1,46 @@
+VAR A 5;
+VAR B 10;
+PRINT A+B; // prints '15'
+PRINT A*B; // prints '50'
+PRINT B/A; // prints '2'
+PRINT B-A; // prints '5'
+PRINT B%A; // prints '0'
+LET A 'Hello, ';
+LET B 'World!';
+PRINT A+B; // prints: 'Hello, World!'
+PRINT B+A; // prints: 'World!Hello, '
+LET A = 3;
+LET B = 5;
+IF (A > B)
+BEGIN
+ PRINT '3 is greater than 5';
+END
+ELSE
+BEGIN
+ PRINT '5 is greater than 3';
+END
+VAR FACTORIAL 1;
+VAR NUM 1;
+WHILE(NUM <= 5)
+BEGIN
+ LET FACTORIAL (FACTORIAL * NUM);
+ LET NUM (NUM+1);
+END
+PRINT FACTORIAL; // prints 120
+VAR ITEMS ARRAY:5;
+PRINT ITEMS; // prints [NIL, NIL, NIL, NIL, NIL]
+LET NUM 0;
+WHILE (NUM < 5)
+BEGIN
+ LET ITEMS[NUM] (NUM * 2);
+ LET NUM (NUM + 1);
+END
+PRINT ITEMS; // prints [0, 2, 4, 6, 8]
+FUNC SQUARE_SUM(NUM1, NUM2)
+BEGIN
+ RETURN (NUM1 * NUM1) + (NUM2 * NUM2);
+END
+LET A = 3;
+LET B = 5;
+VAR C = SQUARE_SUM(A, B);
+PRINT C; // prints '34'
