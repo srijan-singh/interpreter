@@ -276,6 +276,14 @@ class Parser():
                     else:
                          return ast.FALSE()
 
+               elif p[2].gettokentype() == 'NOT' and p[3].gettokentype() == 'EQUAL':
+                    
+                    if(left.value != right.value):
+                         
+                         return ast.TRUE()
+                    else:
+                         return ast.FALSE()
+
                else:
                     raise AssertionError('Oops, this should not be possible in string!')
 
