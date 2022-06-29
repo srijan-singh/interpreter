@@ -51,11 +51,9 @@ class Parser():
 
           # COMPARISONS
           'EQUAL',
-          'NOT_EQUAL',
+          'NOT',
           'GREATER',
           'SMALLER',
-          'GREATER_EQUAL',
-          'LESSER_EQUAL',
 
           # INBUILT
 
@@ -109,6 +107,128 @@ class Parser():
           else:
                raise AssertionError("Variable is not declared!")
 
+     # Braces
+     @self.pg.production('expression : OPEN_SMALL_BRACKET expression PLUS expression CLOSE_SMALL_BRACKET')
+     @self.pg.production('expression : OPEN_SMALL_BRACKET expression MINUS expression CLOSE_SMALL_BRACKET')
+     @self.pg.production('expression : OPEN_SMALL_BRACKET expression MULTIPLY expression CLOSE_SMALL_BRACKET')
+     @self.pg.production('expression : OPEN_SMALL_BRACKET expression DIVIDE expression CLOSE_SMALL_BRACKET')
+     @self.pg.production('expression : OPEN_SMALL_BRACKET expression MODULOUS expression CLOSE_SMALL_BRACKET')
+     @self.pg.production('expression : OPEN_SMALL_BRACKET expression GREATER expression CLOSE_SMALL_BRACKET')
+     @self.pg.production('expression : OPEN_SMALL_BRACKET expression SMALLER expression CLOSE_SMALL_BRACKET')
+     def expression_binop(p):
+          left = p[1]
+          right = p[3]
+
+          if (isinstance(left.value, int) and isinstance(right.value, int)):
+
+               if p[2].gettokentype() == 'PLUS':
+                    return ast.Add(left, right)
+
+               elif p[2].gettokentype() == 'MINUS':
+                    return ast.Sub(left, right)
+
+               elif p[2].gettokentype() == 'MULTIPLY':
+                    return ast.Mul(left, right)
+
+               elif p[2].gettokentype() == 'DIVIDE':
+                         if(right.value != 0):
+                              return ast.Div(left, right)
+                         raise AssertionError('Division by zero not possible!')
+               
+               elif p[2].gettokentype() == 'MODULOUS':
+                         return ast.Mod(left, right)
+
+               elif p[2].gettokentype() == 'GREATER':
+                    
+                    if(left.value > right.value):                         
+                         return ast.TRUE()
+                    
+                    else:
+                         return ast.FALSE()
+
+               elif p[2].gettokentype() == 'SMALLER':
+                    
+                    if(left.value < right.value):                         
+                         return ast.TRUE()
+                    
+                    else:
+                         return ast.FALSE()
+
+               else:
+                    raise AssertionError('Oops, this should not be possible!')
+
+          elif (isinstance(left.value, str) and isinstance(right.value, str)):
+
+               if p[2].gettokentype() == 'PLUS':
+                    return ast.Concat(left, right)
+
+               else:
+                    raise AssertionError('Oops, this should not be possible in string!')
+
+          else:
+               raise AssertionError('Oops, No operation!')
+
+     @self.pg.production('expression : OPEN_SMALL_BRACKET expression EQUAL EQUAL expression CLOSE_SMALL_BRACKET')
+     @self.pg.production('expression : OPEN_SMALL_BRACKET expression GREATER EQUAL expression CLOSE_SMALL_BRACKET')
+     @self.pg.production('expression : OPEN_SMALL_BRACKET expression SMALLER EQUAL expression CLOSE_SMALL_BRACKET')
+     @self.pg.production('expression : OPEN_SMALL_BRACKET expression NOT EQUAL expression CLOSE_SMALL_BRACKET')
+     def expression_comparison(p):
+          left = p[1]
+          right = p[4]
+
+          if (isinstance(left.value, int) and isinstance(right.value, int)):
+
+               if p[2].gettokentype() == 'EQUAL' and p[3].gettokentype() == 'EQUAL':
+               
+                    if(left.value == right.value):                         
+                         return ast.TRUE()
+                    
+                    else:
+                         return ast.FALSE()
+
+               elif p[2].gettokentype() == 'GREATER' and p[3].gettokentype() == 'EQUAL':
+                    
+                    if(left.value >= right.value):                         
+                         return ast.TRUE()
+                    
+                    else:
+                         return ast.FALSE()
+
+               elif p[2].gettokentype() == 'SMALLER' and p[3].gettokentype() == 'EQUAL':
+                    
+                    if(left.value <= right.value):                         
+                         return ast.TRUE()
+                    
+                    else:
+                         return ast.FALSE()
+
+               elif p[2].gettokentype() == 'NOT' and p[3].gettokentype() == 'EQUAL':
+                    
+                    if(left.value != right.value):                         
+                         return ast.TRUE()
+                    
+                    else:
+                         return ast.FALSE()
+
+               else:
+                    raise AssertionError('Oops, this should not be possible!')
+
+          elif (isinstance(left.value, str) and isinstance(right.value, str)):
+
+               if p[2].gettokentype() == 'EQUAL' and p[3].gettokentype() == 'EQUAL':
+                    
+                    if(left.value == right.value):
+                         
+                         return ast.TRUE()
+                    else:
+                         return ast.FALSE()
+
+               else:
+                    raise AssertionError('Oops, this should not be possible in string!')
+
+          else:
+               raise AssertionError('Oops, No operation!')
+
      @self.pg.production('expression : VARIABLE IDENTIFIERS expression SEMICOLON')
      def variable_dec(p):
           key = p[1]
@@ -150,7 +270,7 @@ class Parser():
      @self.pg.production('expression : PRINT expression MULTIPLY expression SEMICOLON')
      @self.pg.production('expression : PRINT expression DIVIDE expression SEMICOLON')
      @self.pg.production('expression : PRINT expression MODULOUS expression SEMICOLON')
-     def expression_binop(p):
+     def print_binop(p):
           left = p[1]
           right = p[3]
 

@@ -20,8 +20,10 @@ class BinaryOp():
     def __init__(self, left, right):
         self.left = left
         self.right = right
+        self.value = 1
 
 class Add(BinaryOp):
+
     def eval(self):
         return self.left.eval() + self.right.eval()
 
@@ -60,6 +62,21 @@ class Concat(BinaryOp):
 
           return result
 
+# Boolean
+
+class TRUE():
+    def __init__(self):
+        self.value = Number(1)
+
+    def eval(self):
+        return self.value.eval()   
+
+class FALSE():
+    def __init__(self):
+        self.value = Number(0)
+
+    def eval(self):
+        return self.value.eval()     
 
 # Inbuilt function
 

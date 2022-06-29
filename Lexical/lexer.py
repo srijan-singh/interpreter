@@ -33,11 +33,9 @@ class Lexer():
 
           # Comparison
           self.lg.add('EQUAL', r'\=')
-          self.lg.add('NOT_EQUAL', r'\!\=')
+          self.lg.add('NOT', r'\!')
           self.lg.add('GREATER', r'\>')
           self.lg.add('SMALLER', r'\<')
-          self.lg.add('GREATER_EQUAL', r'\>\=')
-          self.lg.add('LESSER_EQUAL', r'\<\=')
 
           # Data Types
           self.lg.add('BOOLEAN', r'TRUE|FALSE')
