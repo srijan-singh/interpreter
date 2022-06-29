@@ -13,7 +13,7 @@ pg = parser.Parser()
 pg.parse()
 parser = pg.get_parser()
 
-filepath = "Source\\trial.SCREAM"
+filepath = "Source\\test.SCREAM"
 file = open(filepath)
 
 lines = []
@@ -21,14 +21,14 @@ lines = []
 CONDITION = False
 
 for line in file:
+
+     if line[:2] == r'//':
+          continue
+
      if line == '\n':
           continue
 
      keyword = line.strip()
-
-     if(keyword == 'BEGIN' and output == 0):
-          CONDITION = True
-          print('shi pakde hai')
 
      if(CONDITION):
           if(keyword == 'END'):
@@ -38,6 +38,9 @@ for line in file:
      tokens = lexer.lex(line)
 
      output = parser.parse(tokens).eval()
+
+     if(keyword == 'BEGIN' and output == 0):
+          CONDITION = True
 
 file.close()
 
