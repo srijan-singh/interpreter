@@ -80,18 +80,22 @@ class Parser():
      ])
 
     def parse(self):
+     
+     # Strings
      @self.pg.production('expression : STRINGS')
      def expression_string(p):
           # p is a list of the pieces matched by the right hand side of the
           # rule
           return ast.String(p[0].getstr())
 
+     # Numbers
      @self.pg.production('expression : NUMBERS')
      def expression_number(p):
           # p is a list of the pieces matched by the right hand side of the
           # rule
           return ast.Number(int(p[0].getstr()))
      
+     # Identifiers
      @self.pg.production('expression : IDENTIFIERS')
      def get_identifiers_value(p):
           key = p[0]
@@ -107,7 +111,7 @@ class Parser():
           else:
                raise AssertionError("Variable is not declared!")
 
-     # Braces
+     # Single Operator
      @self.pg.production('expression : OPEN_SMALL_BRACKET expression PLUS expression CLOSE_SMALL_BRACKET')
      @self.pg.production('expression : OPEN_SMALL_BRACKET expression MINUS expression CLOSE_SMALL_BRACKET')
      @self.pg.production('expression : OPEN_SMALL_BRACKET expression MULTIPLY expression CLOSE_SMALL_BRACKET')
@@ -168,6 +172,7 @@ class Parser():
           else:
                raise AssertionError('Oops, No operation!')
 
+     # Double Operator
      @self.pg.production('expression : OPEN_SMALL_BRACKET expression EQUAL EQUAL expression CLOSE_SMALL_BRACKET')
      @self.pg.production('expression : OPEN_SMALL_BRACKET expression GREATER EQUAL expression CLOSE_SMALL_BRACKET')
      @self.pg.production('expression : OPEN_SMALL_BRACKET expression SMALLER EQUAL expression CLOSE_SMALL_BRACKET')
@@ -229,10 +234,14 @@ class Parser():
           else:
                raise AssertionError('Oops, No operation!')
 
+     # Declaring Variable
      @self.pg.production('expression : VARIABLE IDENTIFIERS expression SEMICOLON')
      def variable_dec(p):
           key = p[1]
           value = p[2]
+
+          if key.value in VAR:
+               raise AssertionError("Variable Already Declared!")
 
           VAR[key.value] = value.value
 
@@ -244,6 +253,7 @@ class Parser():
                elif(isinstance(VAR[key.value], str)):
                     return ast.String(VAR[key.value])
 
+     # Updating Variable
      @self.pg.production('expression : LET IDENTIFIERS EQUAL expression SEMICOLON')
      @self.pg.production('expression : LET IDENTIFIERS expression SEMICOLON')
      def variable_dec(p):
@@ -265,6 +275,7 @@ class Parser():
 
           raise AssertionError("Variable not declared!")
 
+     # Without Braces
      @self.pg.production('expression : PRINT expression PLUS expression SEMICOLON')
      @self.pg.production('expression : PRINT expression MINUS expression SEMICOLON')
      @self.pg.production('expression : PRINT expression MULTIPLY expression SEMICOLON')
@@ -307,7 +318,7 @@ class Parser():
           else:
                raise AssertionError('Oops, No operation!')
 
-     
+     # Print
      @self.pg.production('expression : PRINT expression SEMICOLON')
      def inbuilt_print(p):
           return ast.Print(p[1])
@@ -324,7 +335,7 @@ class Parser():
                elif (isinstance(value, str)):
                     return ast.Print(ast.String(value))
 
-
+     # Error
      @self.pg.error
      def error_handle(token):
           raise ValueError("Ran into an error where it wasn't expected", token.gettokentype())
