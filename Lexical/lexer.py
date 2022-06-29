@@ -1,11 +1,11 @@
 from rply import LexerGenerator
 
-class LexicalAnalyzer:
+class Lexer():
      
-     def __init__(self, file_path):
-
-          self.file_path = file_path
+     def __init__(self):
           self.lg = LexerGenerator()
+
+     def _add_tokens(self):
 
           # Statements
           self.lg.add('VARIABLE', r'VAR')
@@ -30,26 +30,31 @@ class LexicalAnalyzer:
           self.lg.add('MULTIPLY', r'\*')
           self.lg.add('DIVIDE', r'\/')
           self.lg.add('MODULOUS', r'\%')
-          self.lg.add('COLON', r'\:')
-          self.lg.add('SEMICOLON', r'\;')
 
           # Comparison
           self.lg.add('EQUAL', r'\=')
           self.lg.add('NOT_EQUAL', r'\!\=')
+          self.lg.add('GREATER', r'\>')
+          self.lg.add('SMALLER', r'\<')
           self.lg.add('GREATER_EQUAL', r'\>\=')
           self.lg.add('LESSER_EQUAL', r'\<\=')
 
           # Data Types
           self.lg.add('BOOLEAN', r'TRUE|FALSE')
           self.lg.add('NUMBERS', r'\d+')
-          self.lg.add('STRINGS', r'\'[a-zA-Z0-9~`!@#$%^&*()-+=_ \{\[\]\}\|\:\;\"\'\,\<\.\>\/\?]*\'')
+          self.lg.add('STRINGS', r'\'[a-zA-Z0-9 \!\,]*\'')
           self.lg.add('ARRAY', r'ARRAY')
           self.lg.add('NIL', r'NIL')
 
-          # User Define
-          self.lg.add('IDENTIFIERS', r'[A-Za-z_][A-Za-z0-9]*')
-          self.lg.add('ARGUMENTS', r'\([a-zA-Z0-9~`!@#$%^&*()-+=_ \{\[\]\}\|\:\;\"\'\,\<\.\>\/\?]*\)')
-          self.lg.add('INDEX', r'\[[a-zA-Z_0-9]*\]')
+          # Identifiers
+          self.lg.add('IDENTIFIERS', r'[_A-Za-z][_A-Za-z0-9]*')
+          self.lg.add('COMMA', r'\,')
+          self.lg.add('COLON', r'\:')
+          self.lg.add('SEMICOLON', r'\;')
+          self.lg.add('OPEN_SMALL_BRACKET', r'\(')
+          self.lg.add('CLOSE_SMALL_BRACKET', r'\)')
+          self.lg.add('OPEN_BIG_BRACKET', r'\[')
+          self.lg.add('CLOSE_BIG_BRACKET', r'\]')
 
           # Strings Features
           self.lg.add('NEWLINE', r'\n')
@@ -60,37 +65,7 @@ class LexicalAnalyzer:
           # Ignore Comments
           self.lg.ignore(r'\/\/[ a-zA-Z0-9~`!@#$%^&*()-+=_ \{\[\]\}\|\:\;\"\'\,\<\.\>\/\?]*')
 
-     def get_tokens(self) -> list:
+     def get_lexer(self):
+          self._add_tokens()
+          return self.lg.build()
 
-          Tokens = list()
-
-          lexer = self.lg.build()
-
-          file = open(self.file_path)
-
-          for elm in lexer.lex(file.read()):
-               Tokens.append(elm)
-
-          file.close()
-
-          return Tokens
-
-
-     def print_tokens(self) -> None:
-
-          lexer = self.lg.build()
-
-          file = open(self.file_path)
-
-          for elm in lexer.lex(file.read()):
-               print(elm)
-
-          file.close()
-
-
-if __name__ == "__main__":
-     l = LexicalAnalyzer("Source\main.SCREAM")
-     #l.print_tokens()
-     tokens = l.get_tokens()
-     print(len(tokens))
-     print(tokens)

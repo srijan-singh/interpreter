@@ -1,0 +1,10 @@
+VAR A 5;
+VAR B 10;
+PRINT A+B; // prints '15'
+PRINT A*B; // prints '50'
+PRINT B/A; // prints '2'
+PRINT B-A; // prints '5'
+PRINT B%A; // prints '0'
+LET A = 'Hello, ';
+LET B 'World!';
+PRINT A+B; // prints: 'Hello, World!'
