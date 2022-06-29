@@ -33,3 +33,12 @@
 
 - ### Let
      - Reassign value
+
+## Builtin
+
+- ### Print
+     - Numbers
+     - Strings
+     - Binary Operation
+     - Comparison
+     - Concatenation
