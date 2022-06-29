@@ -1,12 +1,47 @@
-VAR NUM1 5;
-VAR NUM2 6;
+// Array
 
-PRINT (NUM1 * NUM1) + (NUM2 * NUM2);
+VAR ARR ARRAY:5;
+PRINT ARR; 
 
-PRINT (NUM1 == NUM2) ;
-PRINT (NUM1 >= NUM2) ;
-PRINT (NUM1 <= NUM2) ;
-PRINT (NUM1 != NUM2) ;
+VAR IDX 0;
 
-PRINT (NUM1>NUM2);
-PRINT (NUM1<NUM2);
+LET ARR[IDX] 1;
+LET ARR[1] 2;
+LET IDX IDX+3;
+LET ARR[IDX] 4;
+
+PRINT ARR;
+PRINT LEN(ARR);
+APPEND(ARR, 4);
+PRINT LEN(ARR);
+
+
+// Test Case
+VAR A 5;
+VAR B 10;
+
+PRINT A+B; // prints '15'
+PRINT A*B; // prints '50'
+PRINT B/A; // prints '2'
+PRINT B-A; // prints '5'
+PRINT B%A; // prints '0'
+
+LET A 'Hello, ';
+LET B 'World!';
+
+PRINT A+B; // prints: 'Hello, World!'
+PRINT B+A; // prints: 'World!Hello, '
+
+// IF ELSE
+
+LET A = 3;
+LET B = 5;
+
+IF (A > B)
+BEGIN
+ PRINT '3 is greater than 5';
+END
+ELSE
+BEGIN
+ PRINT '5 is greater than 3';
+END

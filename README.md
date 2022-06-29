@@ -26,6 +26,11 @@
           - Is equal
           - Not equal
 
+- ### Array
+     - Declaration
+     - Update through index
+     - Index access
+
 ## Identifiers
 
 - ### Var
@@ -42,3 +47,11 @@
      - Binary Operation
      - Comparison
      - Concatenation
+
+- ### Len
+     - Size of Array or String
+
+- ### Append
+     - Add element at last
+
+

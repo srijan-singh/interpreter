@@ -3,8 +3,11 @@ from Parser import ast
 
 VAR = {}
 
+
 class Parser():
     def __init__(self):
+     self.CONDITION = 1
+     self.IF = 1
      self.pg = ParserGenerator(
      
      # Keywords
@@ -59,6 +62,7 @@ class Parser():
 
           'PRINT',
           'APPEND',
+          'LEN',
           'SUBARRAY',
 
           # ADDITIONAL FEATURE
@@ -80,7 +84,6 @@ class Parser():
      ])
 
     def parse(self):
-     
      # Strings
      @self.pg.production('expression : STRINGS')
      def expression_string(p):
@@ -94,7 +97,7 @@ class Parser():
           # p is a list of the pieces matched by the right hand side of the
           # rule
           return ast.Number(int(p[0].getstr()))
-     
+        
      # Identifiers
      @self.pg.production('expression : IDENTIFIERS')
      def get_identifiers_value(p):
@@ -111,6 +114,52 @@ class Parser():
           else:
                raise AssertionError("Variable is not declared!")
 
+     # Binary Operation
+     @self.pg.production('expression : expression PLUS expression')
+     @self.pg.production('expression : expression MINUS expression')
+     @self.pg.production('expression : expression MULTIPLY expression')
+     @self.pg.production('expression : expression DIVIDE expression')
+     @self.pg.production('expression : expression MODULOUS expression')
+     def binary_op(p):
+          left = p[0]
+          operator = p[1]
+          right = p[2]
+          
+          if(operator.gettokentype() == 'PLUS'):
+
+               if (type(left.value) == int and type(right.value) == int):
+                    result = int(left.value) + int(right.value)
+                    return ast.Number(result)
+
+               # Concat
+               else:
+                    result = left.value[:-1] + right.value[1:]
+                    return ast.String(result)
+              
+          elif(operator.gettokentype() == 'MINUS'):
+               result = int(left.value) - int(right.value)
+               return ast.Number(result)
+
+          elif(operator.gettokentype() == 'MULTIPLY'):
+               result = int(left.value) * int(right.value)
+               return ast.Number(result)
+
+          elif(operator.gettokentype() == 'DIVIDE'):
+               result = int(left.value) / int(right.value)
+               return ast.Number(int(result))
+
+          elif(operator.gettokentype() == 'MODULOUS'):
+               result = int(left.value) % int(right.value)
+               return ast.Number(result)
+
+          else:
+               raise AssertionError('ERROR : BINARY OPERATION!')
+
+     # Bracket
+     @self.pg.production('expression : OPEN_SMALL_BRACKET expression CLOSE_SMALL_BRACKET')
+     def expression_bracket(p):
+          return p[1]
+
      # Single Operator
      @self.pg.production('expression : OPEN_SMALL_BRACKET expression PLUS expression CLOSE_SMALL_BRACKET')
      @self.pg.production('expression : OPEN_SMALL_BRACKET expression MINUS expression CLOSE_SMALL_BRACKET')
@@ -121,53 +170,52 @@ class Parser():
      @self.pg.production('expression : OPEN_SMALL_BRACKET expression SMALLER expression CLOSE_SMALL_BRACKET')
      def expression_binop(p):
           left = p[1]
+          operator = p[2]
           right = p[3]
 
-          if (isinstance(left.value, int) and isinstance(right.value, int)):
+          if(operator.gettokentype() == 'PLUS'):
 
-               if p[2].gettokentype() == 'PLUS':
-                    return ast.Add(left, right)
+               if (type(left.value) == int and type(right.value) == int):
+                    result = int(left.value) + int(right.value)
+                    return ast.Number(result)
 
-               elif p[2].gettokentype() == 'MINUS':
-                    return ast.Sub(left, right)
+               # Concat
+               else:
+                    result = left.value[:-1] + right.value[1:]
+                    return ast.String(result)
 
-               elif p[2].gettokentype() == 'MULTIPLY':
-                    return ast.Mul(left, right)
-
-               elif p[2].gettokentype() == 'DIVIDE':
-                         if(right.value != 0):
-                              return ast.Div(left, right)
-                         raise AssertionError('Division by zero not possible!')
                
-               elif p[2].gettokentype() == 'MODULOUS':
-                         return ast.Mod(left, right)
 
-               elif p[2].gettokentype() == 'GREATER':
-                    
-                    if(left.value > right.value):                         
-                         return ast.TRUE()
-                    
-                    else:
-                         return ast.FALSE()
+          elif(operator.gettokentype() == 'MINUS'):
+               result = int(left.value) - int(right.value)
+               return ast.Number(result)
 
-               elif p[2].gettokentype() == 'SMALLER':
-                    
-                    if(left.value < right.value):                         
-                         return ast.TRUE()
-                    
-                    else:
-                         return ast.FALSE()
+          elif(operator.gettokentype() == 'MULTIPLY'):
+               result = int(left.value) * int(right.value)
+               return ast.Number(result)
 
+          elif(operator.gettokentype() == 'DIVIDE'):
+               result = int(left.value) / int(right.value)
+               return ast.Number(int(result))
+
+          elif(operator.gettokentype() == 'MODULOUS'):
+               result = int(left.value) % int(right.value)
+               return ast.Number(result)
+
+          elif operator.gettokentype() == 'GREATER':         
+               if(left.value > right.value):                         
+                    return ast.TRUE()
+               
                else:
-                    raise AssertionError('Oops, this should not be possible!')
+                    return ast.FALSE()
 
-          elif (isinstance(left.value, str) and isinstance(right.value, str)):
-
-               if p[2].gettokentype() == 'PLUS':
-                    return ast.Concat(left, right)
-
+          elif operator.gettokentype() == 'SMALLER': 
+               if(left.value < right.value):                         
+                    return ast.TRUE()
+               
                else:
-                    raise AssertionError('Oops, this should not be possible in string!')
+                    return ast.FALSE()
+
 
           else:
                raise AssertionError('Oops, No operation!')
@@ -275,54 +323,97 @@ class Parser():
 
           raise AssertionError("Variable not declared!")
 
-     # Without Braces
-     @self.pg.production('expression : PRINT expression PLUS expression SEMICOLON')
-     @self.pg.production('expression : PRINT expression MINUS expression SEMICOLON')
-     @self.pg.production('expression : PRINT expression MULTIPLY expression SEMICOLON')
-     @self.pg.production('expression : PRINT expression DIVIDE expression SEMICOLON')
-     @self.pg.production('expression : PRINT expression MODULOUS expression SEMICOLON')
-     def print_binop(p):
-          left = p[1]
-          right = p[3]
+     # Declaring Array
+     @self.pg.production('expression : VARIABLE IDENTIFIERS ARRAY COLON expression SEMICOLON')
+     def variable_dec(p):
+          key = p[1]
+          size = p[4]
 
-          if (isinstance(left.value, int) and isinstance(right.value, int)):
+          if key.value in VAR:
+               raise AssertionError("Variable Already Declared!")
 
-               if p[2].gettokentype() == 'PLUS':
-                    return ast.Print(ast.Add(left, right))
+          VAR[key.value] = [None] * int(size.value)
 
-               elif p[2].gettokentype() == 'MINUS':
-                    return ast.Print(ast.Sub(left, right))
+          return ast.Array(VAR[key.value])
 
-               elif p[2].gettokentype() == 'MULTIPLY':
-                    return ast.Print(ast.Mul(left, right))
+     # Array Indexing
+     @self.pg.production('expression : LET IDENTIFIERS OPEN_BIG_BRACKET IDENTIFIERS CLOSE_BIG_BRACKET EQUAL NUMBERS SEMICOLON')
+     @self.pg.production('expression : LET IDENTIFIERS OPEN_BIG_BRACKET IDENTIFIERS CLOSE_BIG_BRACKET NUMBERS SEMICOLON')
+     @self.pg.production('expression : LET IDENTIFIERS OPEN_BIG_BRACKET NUMBERS CLOSE_BIG_BRACKET EQUAL NUMBERS SEMICOLON')
+     @self.pg.production('expression : LET IDENTIFIERS OPEN_BIG_BRACKET NUMBERS CLOSE_BIG_BRACKET NUMBERS SEMICOLON')
+     def indexing(p):
+          key = p[1]
+          index = p[3]
+          value = p[5]
 
-               elif p[2].gettokentype() == 'DIVIDE':
-                         if(right.value != 0):
-                              return ast.Print(ast.Div(left, right))
-                         raise AssertionError('Division by zero not possible!')
-               
-               elif p[2].gettokentype() == 'MODULOUS':
-                         return ast.Print(ast.Mod(left, right))
+          if (index.gettokentype() == 'IDENTIFIERS'):
+               index.value = VAR[index.value]
+
+          if (value.gettokentype() == 'EQUAL'):
+               value = p[6]
+
+          if key.value in VAR:
+               arr = VAR[key.value]
+
+               if int(index.value) < len(arr):
+
+                    if(value.gettokentype() == 'NUMBERS'):
+                         (VAR[key.value])[int(index.value)] = int(value.value)
+                         return ast.Array(VAR[key.value])
+
+                    else:
+                         raise AssertionError("NUMBERS only!")
 
                else:
-                    raise AssertionError('Oops, this should not be possible!')
-
-          elif (isinstance(left.value, str) and isinstance(right.value, str)):
-
-               if p[2].gettokentype() == 'PLUS':
-                    return ast.Print(ast.Concat(left, right))
-
-               else:
-                    raise AssertionError('Oops, this should not be possible in string!')
+                    raise AssertionError('Index out of range!')
 
           else:
-               raise AssertionError('Oops, No operation!')
+               raise AssertionError('Variable not declared!')
+
+     #                                                 Conditional
+
+     # If
+     @self.pg.production('expression : IF expression')
+     def if_exp(p):
+          operator = p[1]
+          self.CONDITION = operator.eval()
+          self.IF = self.CONDITION
+          return p[1]
+
+     # Else
+     @self.pg.production('expression : ELSE')
+     def else_exp(p):
+          if (self.IF == 1):
+               self.CONDITION = 0
+          else:
+               self.CONDITION = 1
+          return ast.Number(1)
+
+     # Begin
+     @self.pg.production('expression : BEGIN')
+     def begin_exp(p):
+          if(self.CONDITION == 1):
+               #print("begin true")
+               return ast.Number(1)
+          else:
+               #print("begin false")
+               return ast.Number(0)
+
+     # End
+     @self.pg.production('expression : END')
+     def end_exp(p):
+          return ast.Number(0)
+
+     #                                                 Inbuilt Functions
 
      # Print
+     @self.pg.production('expression : PRINT expression')     
      @self.pg.production('expression : PRINT expression SEMICOLON')
      def inbuilt_print(p):
           return ast.Print(p[1])
 
+     # Print Var
+     @self.pg.production('expression : PRINT IDENTIFIERS')
      @self.pg.production('expression : PRINT IDENTIFIERS SEMICOLON')
      def inbuilt_print(p):
           exp = p[1]
@@ -335,7 +426,67 @@ class Parser():
                elif (isinstance(value, str)):
                     return ast.Print(ast.String(value))
 
-     # Error
+               else:
+                    return ast.Print(ast.Array(value))
+
+     # Print Index Element
+     @self.pg.production('expression : PRINT IDENTIFIERS OPEN_BIG_BRACKET IDENTIFIERS CLOSE_BIG_BRACKET SEMICOLON')
+     @self.pg.production('expression : PRINT IDENTIFIERS OPEN_BIG_BRACKET NUMBERS CLOSE_BIG_BRACKET SEMICOLON')
+     def get_index_value(p):
+          key = p[1]
+          index = p[3]
+
+          if(index.gettokentype() == 'IDENTIFIERS'):
+               print("Token")
+               if index.value in VAR:
+                    index = VAR[index.value]
+
+          else:
+               index = int(index.value)
+               print(index)
+
+          if key.value in VAR:
+               if index < len(VAR[key.value]):
+                    result = (VAR[key.value])[index]
+                    return ast.Print(ast.Number(result))
+
+               else:
+                    raise AssertionError("Index out of range!")
+
+          else:
+               raise AssertionError("Variable is not declared!")
+
+          # Print DataTypes
+     
+     # LEN
+     @self.pg.production('expression : LEN OPEN_SMALL_BRACKET IDENTIFIERS CLOSE_SMALL_BRACKET') 
+     @self.pg.production('expression : LEN OPEN_SMALL_BRACKET IDENTIFIERS CLOSE_SMALL_BRACKET SEMICOLON')
+     def get_len(p):
+          var = p[2].value
+          value = VAR[var]
+
+          # Strings
+          if (isinstance(value, str)):
+               return ast.Number(len(value)-2)     
+
+          return ast.Number(len(value))
+
+     # Append
+     @self.pg.production('expression : APPEND OPEN_SMALL_BRACKET IDENTIFIERS COMMA expression CLOSE_SMALL_BRACKET')
+     @self.pg.production('expression : APPEND OPEN_SMALL_BRACKET IDENTIFIERS COMMA expression CLOSE_SMALL_BRACKET SEMICOLON')
+     def append(p):
+          var = p[2].value
+          arr = VAR[var]
+          val = p[4].value
+
+          # Strings
+          if (isinstance(arr, list)):
+               arr.append(val)
+               return ast.Array(arr)
+
+          raise AttributeError("No Insertion!")
+
+     #                                            Error
      @self.pg.error
      def error_handle(token):
           raise ValueError("Ran into an error where it wasn't expected", token.gettokentype())

@@ -1,4 +1,5 @@
 # Datatype
+NIL = None
 
 class Number():
     def __init__(self, value):
@@ -14,6 +15,14 @@ class String():
     def eval(self):
         return self.value
 
+class Array():
+    def __init__(self, value):
+        self.value = value
+
+    def eval(self):
+        return self.value
+
+
 # Binary Operation
 
 class BinaryOp():
@@ -25,7 +34,8 @@ class BinaryOp():
 class Add(BinaryOp):
 
     def eval(self):
-        return self.left.eval() + self.right.eval()
+        self.value = self.left.eval() + self.right.eval()
+        return self.value
 
 class Sub(BinaryOp):
     def eval(self):
@@ -86,3 +96,7 @@ class Print():
 
     def eval(self):
         print(self.value.eval())
+
+if __name__ == "__main__":
+    Arr = Array(6)
+    print(Arr.eval())

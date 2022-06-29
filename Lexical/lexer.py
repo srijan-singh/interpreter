@@ -22,6 +22,7 @@ class Lexer():
           # Builtins
           self.lg.add('PRINT', r'PRINT')
           self.lg.add('APPEND', r'APPEND')
+          self.lg.add('LEN', r'LEN')
           self.lg.add('SUBARRAY', r'SUBARRAY')
 
           # Operations
@@ -62,6 +63,9 @@ class Lexer():
           self.lg.ignore(r'\s')
           # Ignore Comments
           self.lg.ignore(r'\/\/[ a-zA-Z0-9~`!@#$%^&*()-+=_ \{\[\]\}\|\:\;\"\'\,\<\.\>\/\?]*')
+
+     def get_value(self, token):
+          token.value
 
      def get_lexer(self):
           self._add_tokens()
