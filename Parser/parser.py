@@ -319,6 +319,10 @@ class Parser():
           if(value.value == '='):
                value = p[3]
 
+          if (not isinstance(value, ast.Number)):
+               if value.value in VAR:
+                    value.value = VAR[value.value]
+
           if key.value in VAR:
 
                VAR[key.value] = value.value
@@ -345,27 +349,31 @@ class Parser():
           return ast.Array(VAR[key.value])
 
      # Array Indexing
-     @self.pg.production('expression : LET IDENTIFIERS OPEN_BIG_BRACKET IDENTIFIERS CLOSE_BIG_BRACKET EQUAL NUMBERS SEMICOLON')
-     @self.pg.production('expression : LET IDENTIFIERS OPEN_BIG_BRACKET IDENTIFIERS CLOSE_BIG_BRACKET NUMBERS SEMICOLON')
-     @self.pg.production('expression : LET IDENTIFIERS OPEN_BIG_BRACKET NUMBERS CLOSE_BIG_BRACKET EQUAL NUMBERS SEMICOLON')
-     @self.pg.production('expression : LET IDENTIFIERS OPEN_BIG_BRACKET NUMBERS CLOSE_BIG_BRACKET NUMBERS SEMICOLON')
+
+     @self.pg.production('expression : LET IDENTIFIERS OPEN_BIG_BRACKET expression CLOSE_BIG_BRACKET EQUAL expression SEMICOLON')
+     @self.pg.production('expression : LET IDENTIFIERS OPEN_BIG_BRACKET expression CLOSE_BIG_BRACKET expression SEMICOLON')
      def indexing(p):
           key = p[1]
           index = p[3]
           value = p[5]
 
-          if (index.gettokentype() == 'IDENTIFIERS'):
-               index.value = VAR[index.value]
+          if (not isinstance(index, ast.Number)):
+               if index.value in VAR:
+                    index.value = VAR[index.value]
 
-          if (value.gettokentype() == 'EQUAL'):
+          if (value.value == '='):
                value = p[6]
+
+          if (not isinstance(index, ast.Number)):
+               if value.value in VAR:
+                    value.value = VAR[value.value]
 
           if key.value in VAR:
                arr = VAR[key.value]
 
                if int(index.value) < len(arr):
 
-                    if(value.gettokentype() == 'NUMBERS'):
+                    if (isinstance(index, ast.Number)):
                          (VAR[key.value])[int(index.value)] = int(value.value)
                          return ast.Array(VAR[key.value])
 
@@ -487,12 +495,38 @@ class Parser():
           arr = VAR[var]
           val = p[4].value
 
-          # Strings
+          # Array
           if (isinstance(arr, list)):
                arr.append(val)
                return ast.Array(arr)
 
           raise AttributeError("No Insertion!")
+
+     # Subarray
+     @self.pg.production('expression : SUBARRAY OPEN_SMALL_BRACKET IDENTIFIERS COMMA expression COMMA expression CLOSE_SMALL_BRACKET')
+     @self.pg.production('expression : SUBARRAY OPEN_SMALL_BRACKET IDENTIFIERS COMMA expression COMMA expression CLOSE_SMALL_BRACKET SEMICOLON')
+     def append(p):
+          var = p[2].value
+          arr = VAR[var]
+          l = p[4]
+          r = p[6]
+
+          if (not isinstance(l, ast.Number)):
+               if l.value in VAR:
+                    l.value = VAR[l.value]
+
+          if (not isinstance(r, ast.Number)):
+               if r.value in VAR:
+                    r.value = VAR[r.value]
+
+          if(l.value > r.value and r.value > len(arr)):
+               raise AssertionError("Error! Index out of range!")
+
+          # Array
+          if (isinstance(arr, list)):
+               return ast.Array(arr[l.value:r.value])
+
+          raise AttributeError("Error! No Sub Array is Possible!")
 
      #                                            Error
      @self.pg.error
