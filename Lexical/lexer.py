@@ -41,7 +41,7 @@ class Lexer():
           # Data Types
           self.lg.add('BOOLEAN', r'TRUE|FALSE')
           self.lg.add('NUMBERS', r'\d+')
-          self.lg.add('STRINGS', r'\'[a-zA-Z0-9 \!\,]*\'')
+          self.lg.add('STRINGS', r'\'[a-zA-Z0-9 \!\,#]*\'')
           self.lg.add('ARRAY', r'ARRAY')
           self.lg.add('NIL', r'NIL')
 

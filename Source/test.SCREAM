@@ -1,16 +1,44 @@
+// Number
+PRINT '#####################################################################';
+PRINT '                                 NUMBER';
+PRINT '#####################################################################';
+
+PRINT (4>0);
+
+VAR Number1 1;
+VAR Number2 6;
+
+PRINT (Number1 == Number2);
+PRINT (Number1 != Number2);
+PRINT (Number1 < Number2);
+PRINT (Number1 <= Number2);
+PRINT (Number1 > Number2);
+PRINT (Number1 >= Number2);
+PRINT (Number1 <= Number2);
+
+
 // String
 
-VAR NAME 'SRIJAN';
+PRINT '#################################################################################';
+PRINT '                                 STRING';
+PRINT '#################################################################################';
 
-PRINT LEN(NAME);
+VAR NAME 'SRIJAN';
 
 PRINT NAME + ' SINGH';
 
 PRINT ('ABC' == 'ABC')
-PRINT ('ABC' != 'CBA')
+PRINT ('ABC' != 'ABC')
 PRINT ('ABC' + 'DEF')
 
+PRINT LEN(NAME);
+
+
 // Array
+
+PRINT '#################################################################################';
+PRINT '                                 ARRAY';
+PRINT '#################################################################################';
 
 VAR ARR ARRAY:5;
 PRINT ARR; 
@@ -34,6 +62,11 @@ PRINT SUBARRAY(ARR, 0, 3);
 
 
 // Test Case
+
+PRINT '#################################################################################';
+PRINT '                                 TEST CASE';
+PRINT '#################################################################################';
+
 VAR A 5;
 VAR B 10;
 

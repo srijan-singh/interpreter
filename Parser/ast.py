@@ -14,7 +14,7 @@ class String():
         self.value = value
      
     def eval(self):
-        return self.value
+        return self.value[1:-1]
 
 class Array():
     def __init__(self, value):
