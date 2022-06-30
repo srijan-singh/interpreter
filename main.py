@@ -1,8 +1,6 @@
 from Lexical import lexer
 from Parser import parser
 
-from rply import Token
-
 import warnings
 
 warnings.filterwarnings("ignore", category=Warning)
